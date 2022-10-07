@@ -16,8 +16,18 @@ const App = () => {
           Wallet button
         </header>
         <div className={styles.exchangeContainer}>
+          {/* title  */}
           <h1 className={styles.headTitle}>Uniswap x</h1>
           <p className={styles.subTitle}>Exchange tokens in seconds</p>
+
+          {/* exchange box */}
+          <div className={styles.exchangeBoxWrapper}>
+            <div className={styles.exchangeBox}>
+              <div className="pink_gradient" />
+              <div className={styles.exchange}></div>
+              <div className="blue_gradient" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
