@@ -12,7 +12,7 @@ import { ethers } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { ROUTER_ADDRESS } from "../config";
 import { AmountIn, AmountOut, Balance } from "./";
-import { styles } from "../styles";
+import styles from "../styles";
 import {
   getAvailableTokens,
   getCounterpartTokens,
@@ -23,6 +23,12 @@ import {
 } from "../utils";
 
 const Exchange = ({ pools }) => {
+  // TODO
+  const isApproving = isOperationPending("approve");
+  const isSwapping = isOperationPending("swap");
+  // const successMessage = getSuccessMessage();
+  // const failureMessage = getFailureMessage();
+
   return (
     <div className="flex flex-col w-full items-center">
       <div className="mb-8">
@@ -33,6 +39,36 @@ const Exchange = ({ pools }) => {
         <AmountOut />
         <Balance />
       </div>
+      {/* button */}
+      {"approvedNeeded" && !isSwapping ? (
+        <button
+          className={
+            "canApprove"
+              ? "bg-site-pink text-white"
+              : "bg-site-dim2 text-site-dim2"`${styles.actionButton}`
+          }
+          disabled={!"canApprove"}
+          onClick={() => {}}
+        >
+          {isApproving ? "Approving..." : "Approve"}
+        </button>
+      ) : (
+        <button
+          className={
+            "canSwap"
+              ? "bg-site-pink text-white"
+              : "bg-site-dim2 text-site-dim2"`${styles.actionButton}`
+          }
+          disabled={!"canSwap"}
+          onClick={() => {}}
+        >
+          {isSwapping
+            ? "Swapping..."
+            : "hasEnoughBalance"
+            ? "Swap"
+            : "Insufficient Balance"}
+        </button>
+      )}
     </div>
   );
 };
