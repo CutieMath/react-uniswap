@@ -8,7 +8,8 @@ import { Loader, Exchange, WalletButton } from "./components";
 
 const App = () => {
   const { account } = useEthers();
-  const poolsLoading = false;
+  const [loading, pools] = usePools();
+
   return (
     <div className={styles.container}>
       <div className={styles.innerContainer}>
@@ -31,10 +32,10 @@ const App = () => {
               <div className="pink_gradient" />
               <div className={styles.exchange}>
                 {account ? (
-                  poolsLoading ? (
+                  loading ? (
                     <Loader title="Loading pools.. one sec..." />
                   ) : (
-                    <Exchange />
+                    <Exchange pools={pools} />
                   )
                 ) : (
                   <Loader title="Please connect your wallet" />
