@@ -26,4 +26,6 @@ export const getPairsInfo = async (pairAddresses, web3) => {
       token1Name,
     });
   }
+
+  return pairsInfo;
 };
