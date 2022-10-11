@@ -42,11 +42,12 @@ const Exchange = ({ pools }) => {
       {/* button */}
       {"approvedNeeded" && !isSwapping ? (
         <button
-          className={
-            "canApprove"
-              ? "bg-site-pink text-white"
-              : "bg-site-dim2 text-site-dim2"`${styles.actionButton}`
-          }
+          className={`
+            ${
+              "canApprove"
+                ? "bg-site-pink text-white"
+                : "bg-site-dim2 text-site-dim2"
+            } ${styles.actionButton}`}
           disabled={!"canApprove"}
           onClick={() => {}}
         >
@@ -54,11 +55,10 @@ const Exchange = ({ pools }) => {
         </button>
       ) : (
         <button
-          className={
-            "canSwap"
-              ? "bg-site-pink text-white"
-              : "bg-site-dim2 text-site-dim2"`${styles.actionButton}`
-          }
+          className={`
+        ${
+          "canSwap" ? "bg-site-pink text-white" : "bg-site-dim2 text-site-dim2"
+        } ${styles.actionButton}`}
           disabled={!"canSwap"}
           onClick={() => {}}
         >
@@ -68,6 +68,14 @@ const Exchange = ({ pools }) => {
             ? "Swap"
             : "Insufficient Balance"}
         </button>
+      )}
+
+      {"failureMessage" && !"resetState" ? (
+        <p className={styles.message}>{"failureMessage"}</p>
+      ) : "successMessage" ? (
+        <p className={styles.message}>{"successMessage"}</p>
+      ) : (
+        ""
       )}
     </div>
   );
