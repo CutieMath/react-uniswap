@@ -23,11 +23,53 @@ import {
 } from "../utils";
 
 const Exchange = ({ pools }) => {
-  // TODO
-  const isApproving = isOperationPending("approve");
-  const isSwapping = isOperationPending("swap");
-  // const successMessage = getSuccessMessage();
-  // const failureMessage = getFailureMessage();
+  const { account } = useEthers();
+  const [fromValue, setFromValue] = useState("0");
+  const [fromToken, setFromToken] = useState(pools[0].token0Address);
+  const [toToken, setToToken] = useState("");
+  const [resetState, setResetState] = useState(false);
+
+  const fromValueBigNumber = parseUnits(fromValue);
+  const availableTokens = getAvailableTokens(pools);
+  const counterpartTokens = getCounterpartTokens(pools, fromToken);
+  const pairAddress =
+    findPoolByTokens(pools, fromToken, toToken)?.address ?? "";
+  const routerContract = new Contract(ROUTER_ADDRESS, abis.router02);
+  const fromTokenContract = new Contract(fromToken, ERC20.abi);
+  const fromTokenBalance = useTokenBalance(fromToken, account);
+  const toTokenBalance = useTokenBalance(toToken, account);
+  const tokenAllowance =
+    useTokenAllowance(fromToken, account, ROUTER_ADDRESS) || parseUnits("0");
+  const approvalNeeded = fromValueBigNumber.gt(tokenAllowance);
+  const fromValueIsGreaterThan0 = fromValueBigNumber.gt("0");
+  const hasEnoughBalance = fromValueBigNumber.lte(
+    fromTokenBalance ?? parseUnits("0")
+  );
+
+  const { state: swapApproveState, send: swapApproveSend } =
+    useContractFunction(fromTokenContract, "approve", {
+      transactionName: "onApproveRequested",
+      gasLimitBufferPercentage: 10,
+    });
+
+  const { state: swapExecuteState, send: swapExecuteSend } =
+    useContractFunction(routerContract, "swapExactTokensForTokens", {
+      transactionName: "swapExactTokensForTokens",
+      gasLimitBufferPercentage: 10,
+    });
+
+  const isApproving = isOperationPending(swapApproveState);
+  const isSwapping = isOperationPending(swapExecuteState);
+
+  const canApprove = !isApproving && approvalNeeded;
+  const canSwap =
+    !approvalNeeded &&
+    !isSwapping &&
+    fromValueIsGreaterThan0 &&
+    hasEnoughBalance;
+
+  const successMessage = getSuccessMessage(swapApproveState, swapExecuteState);
+  const failureMessage = getFailureMessage(swapApproveState, swapExecuteState);
 
   return (
     <div className="flex flex-col w-full items-center">
@@ -40,7 +82,7 @@ const Exchange = ({ pools }) => {
         <Balance />
       </div>
       {/* button */}
-      {"approvedNeeded" && !isSwapping ? (
+      {"approvalNeeded" && !isSwapping ? (
         <button
           className={`
             ${
