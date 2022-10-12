@@ -127,23 +127,38 @@ const Exchange = ({ pools }) => {
   return (
     <div className="flex flex-col w-full items-center">
       <div className="mb-8">
-        <AmountIn />
-        <Balance />
+        <AmountIn
+          value={fromValue}
+          onChange={onFromValueChange}
+          currencyValue={fromToken}
+          onSelect={onFromTokenChange}
+          currencies={availableTokens}
+          isSwapping={isSwapping && hasEnoughBalance}
+        />
+        <Balance tokenBalance={fromTokenBalance} />
       </div>
       <div className="mb-8 w-[100%]">
-        <AmountOut />
-        <Balance />
+        <AmountOut
+          fromToken={fromToken}
+          toToken={toToken}
+          amountIn={fromValueBigNumber}
+          pairContract={pairAddress}
+          currencyValue={toToken}
+          onSelect={onToTokenChange}
+          currencies={counterpartTokens}
+        />
+        <Balance tokenBalance={toTokenBalance} />
       </div>
       {/* button */}
-      {"approvalNeeded" && !isSwapping ? (
+      {approvalNeeded && !isSwapping ? (
         <button
           className={`
             ${
-              "canApprove"
+              canApprove
                 ? "bg-site-pink text-white"
                 : "bg-site-dim2 text-site-dim2"
             } ${styles.actionButton}`}
-          disabled={!"canApprove"}
+          disabled={!canApprove}
           onClick={() => {}}
         >
           {isApproving ? "Approving..." : "Approve"}
@@ -152,9 +167,9 @@ const Exchange = ({ pools }) => {
         <button
           className={`
         ${
-          "canSwap" ? "bg-site-pink text-white" : "bg-site-dim2 text-site-dim2"
+          canSwap ? "bg-site-pink text-white" : "bg-site-dim2 text-site-dim2"
         } ${styles.actionButton}`}
-          disabled={!"canSwap"}
+          disabled={!canSwap}
           onClick={() => {}}
         >
           {isSwapping
@@ -165,10 +180,10 @@ const Exchange = ({ pools }) => {
         </button>
       )}
 
-      {"failureMessage" && !"resetState" ? (
-        <p className={styles.message}>{"failureMessage"}</p>
-      ) : "successMessage" ? (
-        <p className={styles.message}>{"successMessage"}</p>
+      {failureMessage && !resetState ? (
+        <p className={styles.message}>{failureMessage}</p>
+      ) : successMessage ? (
+        <p className={styles.message}>{successMessage}</p>
       ) : (
         ""
       )}
