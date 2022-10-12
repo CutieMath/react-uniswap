@@ -159,7 +159,7 @@ const Exchange = ({ pools }) => {
                 : "bg-site-dim2 text-site-dim2"
             } ${styles.actionButton}`}
           disabled={!canApprove}
-          onClick={() => {}}
+          onClick={onApproveRequested}
         >
           {isApproving ? "Approving..." : "Approve"}
         </button>
@@ -170,7 +170,7 @@ const Exchange = ({ pools }) => {
           canSwap ? "bg-site-pink text-white" : "bg-site-dim2 text-site-dim2"
         } ${styles.actionButton}`}
           disabled={!canSwap}
-          onClick={() => {}}
+          onClick={onSwapRequested}
         >
           {isSwapping
             ? "Swapping..."
