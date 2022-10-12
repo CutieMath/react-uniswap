@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Contract } from "@ethersproject/contracts";
 import { abis } from "@my-app/contracts";
 import {
@@ -70,6 +70,59 @@ const Exchange = ({ pools }) => {
 
   const successMessage = getSuccessMessage(swapApproveState, swapExecuteState);
   const failureMessage = getFailureMessage(swapApproveState, swapExecuteState);
+
+  const onApproveRequested = () => {
+    swapApproveSend(ROUTER_ADDRESS, ethers.constants.MaxUint256);
+  };
+
+  // function swapExactTokensForTokens(
+  //   uint amountIn,
+  //   uint amountOutMin,
+  //   address[] calldata path,
+  //   address to,
+  //   uint deadline
+  // ) external returns (uint[] memory amounts);
+  const onSwapRequested = () => {
+    swapExecuteSend(
+      fromValueBigNumber,
+      0,
+      [fromToken, toToken],
+      account,
+      Math.floor(Date.now() / 1000) + 60 * 20
+    ).then(() => {
+      setFromValue("0");
+    });
+  };
+
+  const onFromValueChange = (value) => {
+    const trimmedValue = value.trim();
+    try {
+      if (trimmedValue) {
+        parseUnits(value);
+        setFromValue(value);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onFromTokenChange = (value) => {
+    setFromToken(value);
+  };
+
+  const onToTokenChange = (value) => {
+    setToToken(value);
+  };
+
+  useEffect(() => {
+    if (failureMessage || successMessage) {
+      setTimeout(() => {
+        setResetState(true);
+        setFromValue("0");
+        setToToken("");
+      }, 5000);
+    }
+  }, [failureMessage, successMessage]);
 
   return (
     <div className="flex flex-col w-full items-center">
