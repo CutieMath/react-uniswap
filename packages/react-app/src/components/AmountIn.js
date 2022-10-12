@@ -32,7 +32,7 @@ const AmountIn = ({
         value={value}
         disabled={isSwapping}
         onChange={(e) =>
-          typeof onChange === "function" && onchange(e.target.value)
+          typeof onChange === "function" && onChange(e.target.value)
         }
         className={styles.amountInput}
       />
